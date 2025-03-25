@@ -7,6 +7,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import type { Transformer } from 'unified';
 import { SKIP, visit, type BuildVisitor } from 'unist-util-visit';
@@ -24,7 +25,7 @@ const HTML_COMMENT_REGEX = new RegExp('<!--([\\s\\S]*?)-->', 'g');
 function removeHtmlComments(): Transformer {
   return (tree) => {
     // TODO: PRs are welcomed to fix the any type
-    // eslint-disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler: BuildVisitor<any> = (node, index, parent) => {
       const isComment = node.value.match(HTML_COMMENT_REGEX);
 
@@ -83,6 +84,15 @@ export function Markdown({
         p: ({ className, ...props }) => (
           <p className={clsx(className, 'mb-4 overflow-hidden text-ellipsis')} {...props} />
         ),
+        blockquote: ({ className, ...props }) => (
+          <blockquote
+            className={clsx(
+              className,
+              'mx-0 my-[10px] border-l-8 border-gray-400 bg-zinc-200 px-2 py-[10px] dark:border-gray-200 dark:bg-zinc-700 ',
+            )}
+            {...props}
+          />
+        ),
         code({ inline, className, children, style: _, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
           return !inline && match ? (
@@ -118,10 +128,8 @@ export function Markdown({
         details: ({ ...props }) => <details {...props} />,
         summary: ({ ...props }) => <summary {...props} />,
       }}
-      // FIXME: this is vuln to XSS and I don't know why we use it, let's remove it
-      // or add in a sanitizer lib like: https://github.com/rehypejs/rehype-sanitize
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rehypePlugins={[rehypeRaw as any]}
+      rehypePlugins={[rehypeRaw as any, rehypeSanitize]}
       remarkPlugins={[removeHtmlComments, remarkGfm, ...(disableMentions ? [] : [userMentions])]}
     >
       {children}

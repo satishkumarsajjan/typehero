@@ -10,13 +10,12 @@ import { cn } from '@repo/ui/cn';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/tabs';
 import { FlaskConical, History, Text } from '@repo/ui/icons';
 
-import { AOT_CHALLENGES } from './aot-slugs';
 import type { ChallengeRouteData } from './getChallengeRouteData';
 import { useTrackNavigationVisiblity } from './use-track-visibility.hook';
 import { ProblemExplorerTrackNav } from '~/components/Navigation/problem-explorer-track-nav';
 
 type Tab = 'description' | 'solutions' | 'submissions';
-interface Props {
+interface LeftWrapperProps {
   children: ReactNode;
   challenge: ChallengeRouteData['challenge'];
   track: ChallengeRouteData['track'];
@@ -24,14 +23,19 @@ interface Props {
   isDesktop: boolean;
 }
 
-export function LeftWrapper({ children, challenge, track, expandPanel, isDesktop }: Props) {
+export function LeftWrapper({
+  children,
+  challenge,
+  track,
+  expandPanel,
+  isDesktop,
+}: LeftWrapperProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const featureFlags = useContext(FeatureFlagContext);
 
-  const isAotChallenge = useMemo(() => AOT_CHALLENGES.includes(challenge.slug), [challenge.slug]);
   const isCollapsedRef = useRef(isCollapsed);
   const isDesktopRef = useRef(isDesktop);
   isDesktopRef.current = isDesktop;
@@ -98,7 +102,7 @@ export function LeftWrapper({ children, challenge, track, expandPanel, isDesktop
   // Hide the enrolled track when in collapsed mobile view.
   const isTrackFeatureEnabled = featureFlags?.enableInChallengeTrack;
   const hasEnrolledTrackForChallenge = track !== null;
-  const isTrackVisible = isTrackFeatureEnabled && (!isCollapsed || isDesktop) && !isAotChallenge;
+  const isTrackVisible = isTrackFeatureEnabled && (!isCollapsed || isDesktop);
 
   const isIconOnly = isCollapsed && isDesktop;
   const { setIsTrackTitleVisible } = useTrackNavigationVisiblity();
@@ -150,7 +154,9 @@ export function LeftWrapper({ children, challenge, track, expandPanel, isDesktop
             )}
             onClick={() => {
               router.push(`/challenge/${challenge.slug}`);
-              isCollapsed && expandPanel();
+              if (isCollapsed) {
+                expandPanel();
+              }
             }}
             onFocus={(e) => {
               e.target.click();
@@ -166,7 +172,9 @@ export function LeftWrapper({ children, challenge, track, expandPanel, isDesktop
             )}
             onClick={() => {
               router.push(`/challenge/${challenge.slug}/solutions`);
-              isCollapsed && expandPanel();
+              if (isCollapsed) {
+                expandPanel();
+              }
             }}
             onFocus={(e) => {
               e.target.click();
@@ -186,7 +194,9 @@ export function LeftWrapper({ children, challenge, track, expandPanel, isDesktop
             )}
             onClick={() => {
               router.push(`/challenge/${challenge.slug}/submissions`);
-              isCollapsed && expandPanel();
+              if (isCollapsed) {
+                expandPanel();
+              }
             }}
             onFocus={(e) => {
               e.target.click();

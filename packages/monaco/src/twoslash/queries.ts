@@ -53,7 +53,7 @@ export async function checkTwoslashQuery({
       offset: inspectionOff,
       worker,
     });
-    const inlayHint = await createInlayHint({
+    const inlayHint = createInlayHint({
       hint,
       monaco,
       position: endPos,
@@ -105,7 +105,7 @@ export async function checkInlineTwoslashQuery({
       monaco,
     });
 
-    const inlayHint = await createInlayHint({
+    const inlayHint = createInlayHint({
       hint,
       monaco,
       position: endPos,
@@ -132,6 +132,8 @@ export async function getHintsFromQueries(queryInfo: Query): Promise<{
 
   return {
     hints: results,
+    // TODO: is InlayHintList's dispose() required? Or is it just an optional Disposable?
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     dispose: () => {},
   };
 }

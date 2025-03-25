@@ -1,14 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
 const useAotCountdown = () => {
+  const router = useRouter();
   const [releaseDate, setReleaseDate] = useState(() => calculateNextReleaseTime());
   const [remainingTime, setRemainingTime] = useState(
     Math.max(0, releaseDate.getTime() - Date.now()),
   );
-  const aotEnded = remainingTime === 0;
+
+  const aotEnded = Date.now() > new Date(Date.UTC(2024, 11, 25, 5, 0, 0)).getTime();
 
   useEffect(() => {
     // 05:00AM Dec 25, 2024 (UTC) <-> 00:00AM Dec 25, 2024 (EST)
@@ -19,6 +21,10 @@ const useAotCountdown = () => {
     }
 
     const countdown = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+
       const newRemainingTime = Math.max(0, releaseDate.getTime() - Date.now());
       setRemainingTime(newRemainingTime);
 
@@ -26,6 +32,7 @@ const useAotCountdown = () => {
         const nextReleaseDateTime = calculateNextReleaseTime();
         setRemainingTime(nextReleaseDateTime.getTime() - Date.now());
         setReleaseDate(nextReleaseDateTime);
+        router.refresh();
       }
     };
 
@@ -34,7 +41,7 @@ const useAotCountdown = () => {
     return () => {
       clearInterval(timerId);
     };
-  }, [releaseDate]);
+  }, [releaseDate, router]);
 
   return { ...calculateTimeComponents(remainingTime), aotEnded };
 };
@@ -128,21 +135,6 @@ export const DailyCountdownTimerClientComponent = () => {
 
   if (!isMounted) {
     return <></>;
-  }
-
-  const isAtLeastOneDayPastAotEndDate =
-    Date.now() >= new Date(Date.UTC(2024, 11, 26, 5, 0, 0)).getTime();
-
-  // This will render one day after the last challenge is released
-  if (isAtLeastOneDayPastAotEndDate) {
-    return (
-      <>
-        <p className="text-center text-xl font-semibold">Thats a wrap! See you next year!</p>
-        <p className="text-center text-xl font-semibold">
-          <Image src="/santa_dead.png" width={200} height={200} alt="" className="" />
-        </p>
-      </>
-    );
   }
 
   // This will render between when the last challenge is released until one day after

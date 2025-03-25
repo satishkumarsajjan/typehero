@@ -18,18 +18,17 @@ import { TypographyH3 } from '@repo/ui/components/typography/h3';
 import { Bookmark as BookmarkIcon, Calendar, CheckCircle, Flag, Share } from '@repo/ui/icons';
 import clsx from 'clsx';
 import { debounce } from 'lodash';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { type ChallengeRouteData } from '~/app/challenge/[slug]/getChallengeRouteData';
 import { ReportDialog } from '~/components/ReportDialog';
+import { ShareUrl } from '~/components/share-url';
 import { getRelativeTimeStrict } from '~/utils/relativeTime';
 import { addOrRemoveBookmark } from '../bookmark.action';
-import { Vote } from '../vote';
-import { AOT_CHALLENGES } from '../../[slug]/aot-slugs';
-import { Suggestions } from './suggestions';
 import { UserBadge } from '../comments/enhanced-user-badge';
-import { ShareUrl } from '~/components/share-url';
+import { Vote } from '../vote';
+import { Suggestions } from './suggestions';
 
-interface Props {
+interface DescriptionProps {
   challenge: ChallengeRouteData['challenge'];
 }
 
@@ -40,11 +39,9 @@ export interface FormValues {
   other: boolean;
 }
 
-export function Description({ challenge }: Props) {
+export function Description({ challenge }: DescriptionProps) {
   const [hasBookmarked, setHasBookmarked] = useState(challenge.bookmark.length > 0);
   const session = useSession();
-
-  const isAotChallenge = useMemo(() => AOT_CHALLENGES.includes(challenge.slug), [challenge.slug]);
 
   const debouncedBookmark = useRef(
     debounce(async (challengeId: number, userId: string, shouldBookmark: boolean) => {
@@ -61,7 +58,8 @@ export function Description({ challenge }: Props) {
 
   return (
     <div
-      // eslint-disable-next-line
+      // TODO: Fix this accessibility issue!
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
       className="custom-scrollable-element h-full overflow-y-auto px-4 pb-36 pt-3 outline-none"
     >
@@ -101,7 +99,7 @@ export function Description({ challenge }: Props) {
       </div>
       {/* Difficulty & Action Buttons */}
       <div className="mt-3 flex items-center gap-3">
-        {!isAotChallenge ? <DifficultyBadge difficulty={challenge.difficulty} /> : null}
+        <DifficultyBadge difficulty={challenge.difficulty} />
         {challenge.hasSolved ? (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -170,6 +168,8 @@ export function Description({ challenge }: Props) {
                   shouldBookmark = true;
                   setHasBookmarked(true);
                 }
+                // TODO: Is this guaranteed to exist, or is userId actually optional?
+                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                 debouncedBookmark(challenge.id, session.data?.user?.id!, shouldBookmark)?.catch(
                   (e) => {
                     console.error(e);
@@ -190,7 +190,7 @@ export function Description({ challenge }: Props) {
         <Markdown>{challenge.description}</Markdown>
       </div>
       {/* More Challenges Suggestions */}
-      {!isAotChallenge && <Suggestions challengeId={challenge.id} />}
+      <Suggestions challengeId={challenge.id} />
     </div>
   );
 }

@@ -9,14 +9,18 @@ import {
 } from '@repo/ui/components/tooltip';
 import { ChevronLeft, ChevronRight } from '@repo/ui/icons';
 import Link from 'next/link';
-import { useSelectedLayoutSegment } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 export function DayScroller(props: { eventDay?: number; year: number }) {
-  const segment = useSelectedLayoutSegment();
+  const { day } = useParams();
   const days = Array.from({ length: 25 });
-  const [selectedDay, setSelectedDay] = useState(Number(segment));
+  const [selectedDay, setSelectedDay] = useState(Number(day ?? 0));
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setSelectedDay(Number(day ?? 0));
+  }, [day]);
 
   const scrollToSelectedDay = useCallback(
     (dayIdx: number, behavior: 'instant' | 'smooth', node: HTMLDivElement | null) => {
@@ -51,7 +55,7 @@ export function DayScroller(props: { eventDay?: number; year: number }) {
   }
 
   return (
-    <div className="flex flex-row space-x-4">
+    <div className="flex flex-row space-x-4 bg-gradient-to-r from-transparent via-neutral-300/50 to-transparent dark:via-neutral-700/50">
       <Button variant="ghost" size="icon" className="flex-none" onClick={() => scroll(-1)}>
         <ChevronLeft />
       </Button>
@@ -104,6 +108,7 @@ function DayLink({
 }: {
   selectedDay: number;
   i: number;
+  /** determines the last day that is unlocked. for past events its 25 since the entire event is available */
   eventDay: number;
   setSelectedDay: (val: number) => void;
   year: number;

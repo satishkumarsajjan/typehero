@@ -1,18 +1,24 @@
 import { type Session } from '@repo/auth/server';
 import { api } from '~/trpc/server';
 import { getAotSlug } from '~/utils/getAotSlug';
-import { isAfterJanuaryFirst } from '~/utils/time-utils';
+import { isAfterJanuaryFirst, isChallengeUnlocked } from '~/utils/time-utils';
 import { Comments } from './_components/comments';
 import { Description } from './_components/description';
+import { getAllFlags } from '~/utils/feature-flag';
+import { notFound } from 'next/navigation';
 
-interface Props {
+interface ChallengesProps {
   params: {
     year: string;
     day: string;
   };
 }
 
-export default async function Challenges({ params: { year, day } }: Props) {
+export default async function Challenges({ params: { year, day } }: ChallengesProps) {
+  const { unlockAotChallenges } = await getAllFlags();
+  if (!isChallengeUnlocked(Number(year), Number(day)) && !unlockAotChallenges) {
+    return notFound();
+  }
   const challenge = await api.event.getEventChallengeBySlug({ slug: getAotSlug({ year, day }) });
 
   return (

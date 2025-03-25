@@ -22,7 +22,7 @@
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
 
-    --primary: 211 61% 48%;
+    --primary: 211 61% 47%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%;
@@ -70,7 +70,7 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
 
-    --primary: 211 61% 48%;
+    --primary: 211 61% 47%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 3.7% 15.9%;
@@ -555,4 +555,44 @@ body.mobile-nav-active {
 
 .animate-pulse-fast {
   animation: pulse 2s ease-in-out infinite;
+}
+
+.candy-cane {
+  background: repeating-linear-gradient(45deg, #fff2, #fff2 10px, #fff0 10px, #fff0 20px);
+}
+
+.candy-cane-neutral {
+  background: repeating-linear-gradient(45deg, #8884, #8884 10px, #fff0 10px, #fff0 20px);
+}
+
+.animate-bulb {
+  opacity: 0.05;
+  /* scale: 0.5; */
+  animation: bulb 0.25s ease-in-out infinite alternate;
+}
+
+.animate-bulb-slow {
+  opacity: 0.1;
+  /* scale: 0.5; */
+  animation: bulb 1s ease-in-out infinite alternate;
+}
+
+@keyframes bulb {
+  to {
+    /* scale: 1; */
+    opacity: 1;
+  }
+}
+
+.animate-slidedown {
+  opacity: 0;
+  translate: 0 -1rem;
+  animation: slidedown 0.66s var(--delay) cubic-bezier(0.175, 0.885, 0.32, 2.275) forwards;
+}
+
+@keyframes slidedown {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }

@@ -65,6 +65,7 @@ export {
   Settings,
   Settings2,
   Shapes,
+  Star,
   Palette,
   Share,
   Shield,
@@ -88,7 +89,13 @@ export {
   X,
   XCircle,
   Text,
+  Trophy,
   type LucideIcon,
 } from 'lucide-react';
 export { Github } from './icons/github';
 export { Twitter } from './icons/twitter';
+export {
+  SiDiscord as Discord,
+  SiX as NewTwitter,
+  SiBluesky as Bluesky,
+} from '@icons-pack/react-simple-icons';

@@ -9,13 +9,13 @@ import { FlaskConical, History, Text } from '@repo/ui/icons';
 import { isAfterJanuaryFirst } from '~/utils/time-utils';
 
 type Tab = 'description' | 'solutions' | 'submissions';
-interface Props {
+interface LeftWrapperProps {
   children: ReactNode;
   expandPanel: () => void;
   isDesktop: boolean;
 }
 
-export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
+export function LeftWrapper({ children, expandPanel, isDesktop }: LeftWrapperProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { year, day } = useParams();
@@ -108,7 +108,7 @@ export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
         >
           <TabsTrigger
             className={cn(
-              'rounded-md duration-300 hover:bg-neutral-200/50 data-[state=active]:bg-neutral-200 dark:hover:bg-neutral-700/50 dark:data-[state=active]:bg-neutral-700',
+              'rounded-md rounded-tl-xl duration-300 hover:bg-neutral-200/50 data-[state=active]:bg-neutral-200 dark:hover:bg-neutral-700/50 dark:data-[state=active]:bg-neutral-700',
               {
                 'p-4': isIconOnly,
                 'rounded-bl-xl': isCollapsed && !isDesktop,
@@ -116,7 +116,9 @@ export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
             )}
             onClick={() => {
               router.push(`/events/${year}/${day}`);
-              isCollapsed && expandPanel();
+              if (isCollapsed) {
+                expandPanel();
+              }
             }}
             onFocus={(e) => {
               e.target.click();
@@ -133,7 +135,9 @@ export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
               )}
               onClick={() => {
                 router.push(`/events/${year}/${day}/solutions`);
-                isCollapsed && expandPanel();
+                if (isCollapsed) {
+                  expandPanel();
+                }
               }}
               onFocus={(e) => {
                 e.target.click();
@@ -145,7 +149,7 @@ export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
           ) : null}
           <TabsTrigger
             className={cn(
-              'rounded-md rounded-tr-lg duration-300 hover:bg-neutral-200/50 data-[state=active]:bg-neutral-200 dark:hover:bg-neutral-700/50 dark:data-[state=active]:bg-neutral-700',
+              'rounded-md rounded-tr-xl duration-300 hover:bg-neutral-200/50 data-[state=active]:bg-neutral-200 dark:hover:bg-neutral-700/50 dark:data-[state=active]:bg-neutral-700',
               {
                 'p-4': isIconOnly,
                 'rounded-br-xl': isCollapsed && !isDesktop,
@@ -153,7 +157,9 @@ export function LeftWrapper({ children, expandPanel, isDesktop }: Props) {
             )}
             onClick={() => {
               router.push(`/events/${year}/${day}/submissions`);
-              isCollapsed && expandPanel();
+              if (isCollapsed) {
+                expandPanel();
+              }
             }}
             onFocus={(e) => {
               e.target.click();
